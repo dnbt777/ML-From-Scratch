@@ -1,0 +1,50 @@
+
+
+transformer class for the whole thing
+    hold all weights and biases: mlp, Wq, Wk, V, MLP network, original encodings
+    (intiialize as random)
+    Wu: unembedding matrix
+        same size as encoding matrix - this is a function (matrix) that maps a final vector to a probability distribution of possible tokens (hence why it has one row for each token)
+
+    # Encoder stuff
+    method: get original encodings(tokens):
+        self explanatory, return encodings
+
+    method: attention(self, encodings)
+        get encodings for tokens
+        positional encode the encodings
+        do attention table
+        multiply w V
+        softmax 
+        residue
+        normalize 
+        return output
+    
+    method: feed_forward(self, encodings)
+        feed encodings through MLP
+        residue stuff and normalize
+    
+    method: encoder_layer(self, tokens, sublayers=6)
+        encodings = get_original_encodings(tokens)
+        for sublayer in range(sublayers):
+            encodings = attention(encodings)
+            encodings = feed_forward(encodings)
+        return encodings
+
+
+    # Decoder stuff
+    method: masked attention
+        ???
+    
+    # do masked attention
+
+    # do attention
+
+    # do feed forward
+
+
+    # finally unencode
+    add positional encoding to the output embeddings
+    
+    unembedding matrix x encodings[-1] => probability distribution for tokens
+    

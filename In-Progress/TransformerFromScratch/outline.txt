@@ -1,0 +1,47 @@
+1 make transformer
+2 train it
+
+
+
+transformer components
+
+######## ENCODER ###### (N=6)
+input encodings E (TRAIN WEIGHTS)
+positionally encode input encodings Ep
+
+for i in range N=6:
+    ATTENTION
+    - Query matrix W_q (TRAIN WEIGHTS)
+    - key matrix W_k (TRAIN WEIGHTS)
+    - value matrix W_v (TRAIN WEIGHTS)
+
+    Q = Ep x W_q
+    K = Ep x W_k
+    attention_table = (Q dot K_transposed)
+    softmaxed_attn_table = softmax attn_table
+    scale by sqrt dims
+
+    V = W_v
+
+    attention = softmaxed_attn_table x V
+
+
+    ADD AND NORMALIZE
+    add attention to embeddings and then normalize embedding vector
+
+
+    FEED FORWARD
+    instead of attention, put Ep into an MLP (TRAIN WEIGHTS) (identical MLP for each Ep)
+        two linear transformations with a ReLU activation in between (this is what the AI said)
+
+    ADD AND NORMALIZE
+    add output of MLP to the embeddings
+
+return output embeddings
+
+
+######## DECODER ####### (N=6)
+
+masked multi head attention layer
+multi head attention but there's masking on the previous tokens
+
