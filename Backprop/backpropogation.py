@@ -11,8 +11,8 @@ class MLP():
             np.random.randn(*(n,)) for n in layers[1:]
         ]
         self.layers = [np.zeros((layer_size,)) for layer_size in layers]
-        self.activation_function = np.vectorize(lambda x: max(0, x))
-        self.output_activation_function = np.vectorize(sigmoid)
+        self.activation_function = np.vectorize(lambda x: max(0, x)) # relu
+        self.output_activation_function = sigmoid
         self.loss_function = messi # implement MSE here
     
 
@@ -56,33 +56,52 @@ class MLP():
         weight_updates = []
         bias_updates = []
 
+        # Now implement for the other layers
+        for i in range(len(layers), 0, -1): # going backwards
+            if i == len(layers):
+                # get dL/doutput_activation
+                dL_doutputactivation = 2*(y_hat - y_target) # (output_layer, 1)
 
-        # get dL/doutput_activation
-        dL_doutputactivation = 2*(y_hat - y_target) # (output_layer, 1)
+                # get d_output_activation/d_output_z
+                # sigmoid for last layer relu for the rest
+                output_z = z_values[-1]
+                doutputactivation_doutputz = sigmoid(output_z)*(1-sigmoid(output_z)) # (output_layer, 1)
 
-        # get d_output_activation/d_output_z
-        # sigmoid for last layer relu for the rest
-        output_z = z_values[-1]
-        doutputactivation_doutputz = sigmoid(output_z)*(1-sigmoid(output_z)) # (output_layer, 1)
+                # get d_output_z/d_weights
+                # also get d_output_z/d_biases (1)
+                # this is just the last layer's activation
+                previous_layer_activation = activations[-2]
+                doutputz_dweights = previous_layer_activation #(m, 1)
+                doutputz_dbiases = 1
 
-        # get d_output_z/d_weights
-        # also get d_output_z/d_biases (1)
-        # this is just the last layer's activation
-        previous_layer_activation = activations[-2]
-        doutputz_dweights = previous_layer_activation #(m, 1)
-        doutputz_dbiases = np.ones_like(previous_layer_activation)
+                # (m, n) <= (n, 1) (n, 1) (1, m)
+                # dl/dw = elementwise_mult(dl/doa * doa/doz) (x) doutputz_dweights.T
+                dL_dweights = np.outer(dL_doutputactivation*doutputactivation_doutputz, doutputz_dweights)
+                dL_dbiases = dL_doutputactivation*doutputactivation_doutputz*doutputz_dbiases
 
-        # (m, n) <= (n, 1) (n, 1) (1, m)
-        # dl/dw = elementwise_mult(dl/doa * doa/doz) * doutputz_dweights.T
-        dL_dweights = np.outer(dL_doutputactivation*doutputactivation_doutputz, doutputz_dweights)
+                print(dL_dweights.shape)
+                print(dL_dbiases.shape)
 
-        print(dL_dweights.shape)
+                current_delta = dL_doutputactivation*doutputactivation_doutputz
+            else:
+                # update delta to next chain
+                # get branches of the chain leading to W and B
+                # add w and b to updates lists
+
+            
+            # store the gradients
+            weight_updates.append(dL_dweights)
+            bias_updates.append(dL_dbiases)
+
+
+
         return
 
 
 
 
 
+        # Old attempt/notes
         # backpropogation starts here
         # start with last weights and biases
         # goal: find d_loss / d_weights, and d_loss / d_biases
@@ -111,7 +130,7 @@ class MLP():
 
        
 
-
+@np.vectorize
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
