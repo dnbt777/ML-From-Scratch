@@ -15,5 +15,6 @@ Go down through the chain, the dz/da*da/dz is the 'delta' to keep track of. At e
 ## Speedrunning
 
 Records
+ - 29:28.87 (5/16)
  - 1.4hrs (5/14)
  - 20hrs (5/14)
